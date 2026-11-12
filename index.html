@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d12">
+  <title>Underhere: The Fall</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3E%3Crect width=%2716%27 height=%2716%27 fill=%27%230b0d12%27/%3E%3Crect x=%277%27 y=%272%27 width=%272%27 height=%2712%27 fill=%27%23e8e2c8%27/%3E%3Crect x=%276%27 y=%272%27 width=%274%27 height=%273%27 fill=%27%23c8503c%27/%3E%3C/svg%3E">
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; height: 100%; background: #0b0d12; color: #9aa4b5;
+      overflow: hidden; overscroll-behavior: none;
+      font: 12px/1.4 ui-monospace, Menlo, Consolas, monospace;
+      -webkit-user-select: none; user-select: none; -webkit-touch-callout: none;
+    }
+    #app {
+      height: 100vh; height: 100dvh; display: grid;
+      grid-template: "screen" 1fr / 1fr;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    #screen { grid-area: screen; display: grid; place-items: center; min-width: 0; min-height: 0; }
+    #screen canvas { display: block; image-rendering: pixelated; }
+    .cluster { display: none; touch-action: none; }
+
+    /* Touch layout: controls sit beside the screen, never on top of it. */
+    body.touch #app { grid-template: "left screen right" 1fr / var(--gutter) 1fr var(--gutter); --gutter: clamp(132px, 19vw, 190px); }
+    body.touch .cluster { display: grid; align-content: end; justify-items: center; gap: 14px; padding: 12px 8px 22px; }
+    #left { grid-area: left; }
+    #right { grid-area: right; }
+    @media (orientation: portrait) {
+      body.touch #app { grid-template: "screen screen" 1fr "left right" auto / 1fr 1fr; }
+      body.touch .cluster { padding-bottom: 36px; }
+    }
+
+    .btn, .dpad {
+      touch-action: none; border: 2px solid #3a4558; background: #171c26; color: #9aa4b5;
+      display: grid; place-items: center; font-weight: 700;
+    }
+    .btn.held { background: #3a4558; color: #fff; }
+    .round { width: 62px; height: 62px; border-radius: 50%; font-size: 18px; }
+    .shoulder { width: 96px; height: 38px; border-radius: 10px; }
+    .small { width: 60px; height: 26px; border-radius: 13px; font-size: 10px; }
+    .dpad {
+      width: 128px; height: 128px; border-radius: 50%; position: relative;
+      background:
+        linear-gradient(#3a4558, #3a4558) center / 34% 88% no-repeat,
+        linear-gradient(#3a4558, #3a4558) center / 88% 34% no-repeat, #171c26;
+    }
+    .dpad::after { content: ""; position: absolute; width: 18%; height: 18%; border-radius: 50%; background: #171c26; }
+    .dpad.held-up { box-shadow: inset 0 10px 0 -4px #9aa4b5; }
+    .dpad.held-down { box-shadow: inset 0 -10px 0 -4px #9aa4b5; }
+    .dpad.held-left { box-shadow: inset 10px 0 0 -4px #9aa4b5; }
+    .dpad.held-right { box-shadow: inset -10px 0 0 -4px #9aa4b5; }
+    .dpad.held-up.held-left { box-shadow: inset 8px 8px 0 -4px #9aa4b5; }
+    .dpad.held-up.held-right { box-shadow: inset -8px 8px 0 -4px #9aa4b5; }
+    .dpad.held-down.held-left { box-shadow: inset 8px -8px 0 -4px #9aa4b5; }
+    .dpad.held-down.held-right { box-shadow: inset -8px -8px 0 -4px #9aa4b5; }
+    .ab { display: grid; grid-template-columns: 62px 62px; gap: 8px; }
+    .ab .b { margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="left" class="cluster">
+      <div class="btn shoulder" data-btn="l">L</div>
+      <div class="dpad" data-dpad></div>
+      <div class="btn small" data-btn="select">SELECT</div>
+    </div>
+    <div id="screen"></div>
+    <div id="right" class="cluster">
+      <div class="btn shoulder" data-btn="r">R</div>
+      <div class="ab">
+        <div class="btn round b" data-btn="b">B</div>
+        <div class="btn round a" data-btn="a">A</div>
+      </div>
+      <div class="btn small" data-btn="start">START</div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
