@@ -63,11 +63,28 @@ try {
   const afterRight = await state(desktop);
   check(afterRight.x > before.x + 15 && afterRight.facing === 'right', 'arrow key walks the hero right');
 
-  await desktop.keyboard.down('KeyW');
-  await desktop.waitForTimeout(3000);
-  await desktop.keyboard.up('KeyW');
-  const atWall = await state(desktop);
-  check(atWall.y === 16 && atWall.facing === 'up', 'hero stops flush against the top wall');
+  // Spear: tap A, expect a thrust; R, expect a dodge.
+  await desktop.keyboard.press('KeyZ');
+  await desktop.waitForFunction(() => window.__underhere.state().state === 'thrust');
+  await desktop.waitForFunction(() => window.__underhere.state().state === 'free');
+  check(true, 'Z thrusts the spear and recovers');
+  const preDodge = await state(desktop);
+  await desktop.keyboard.press('KeyC');
+  await desktop.waitForTimeout(500);
+  const postDodge = await state(desktop);
+  check(Math.abs(postDodge.x - preDodge.x - 32) < 0.01, 'C dodges two tiles the way she faces');
+  await desktop.screenshot({ path: `${OUT}desktop.png` });
+
+  // Walk through the east door and expect the slide into room 1.
+  await desktop.keyboard.down('ArrowRight');
+  await desktop.waitForFunction(() => window.__underhere.state().sliding === true, null, { timeout: 8000 });
+  await desktop.waitForTimeout(250);
+  await desktop.screenshot({ path: `${OUT}slide.png` });
+  await desktop.waitForFunction(() => window.__underhere.state().room === 1, null, { timeout: 4000 });
+  await desktop.keyboard.up('ArrowRight');
+  const inRoom1 = await state(desktop);
+  check(inRoom1.enemies.length === 2 && inRoom1.enemies.every((e) => e.kind === 'rusher'), 'room 1 holds two rushers');
+  check(inRoom1.hp === 12, 'hearts are full on arrival');
 
   // Logic rate: count steps over one second of wall-clock time.
   const s0 = await state(desktop);
@@ -75,7 +92,8 @@ try {
   const s1 = await state(desktop);
   const rate = s1.steps - s0.steps;
   check(rate >= 54 && rate <= 66, `logic runs at about 60 steps per second (measured ${rate})`);
-  await desktop.screenshot({ path: `${OUT}desktop.png` });
+  await desktop.waitForTimeout(1500);
+  await desktop.screenshot({ path: `${OUT}fight.png` });
 
   // Tablet: touch controls beside the screen.
   const tablet = await browser.newPage({ viewport: { width: 1024, height: 768 }, hasTouch: true, isMobile: true, deviceScaleFactor: 2 });

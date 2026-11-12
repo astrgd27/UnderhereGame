@@ -1,13 +1,9 @@
 import { TILE } from './constants';
 import type { Room } from './room';
 
-/** Axis-aligned box in room pixels. x, y is the top-left corner. */
-export interface Box {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-}
+import type { Box } from './geom';
+
+export type { Box };
 
 const EPS = 1e-4;
 

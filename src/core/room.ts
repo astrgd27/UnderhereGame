@@ -25,9 +25,14 @@ export class Room {
     return this.rows * TILE;
   }
 
+  /**
+   * Tiles outside the room repeat the nearest edge tile, so a door gap in the
+   * border continues outward and the hero can walk off-screen through it.
+   */
   get(col: number, row: number): Tile {
-    if (col < 0 || row < 0 || col >= this.cols || row >= this.rows) return Tile.Wall;
-    return this.tiles[row * this.cols + col] as Tile;
+    const c = Math.min(this.cols - 1, Math.max(0, col));
+    const r = Math.min(this.rows - 1, Math.max(0, row));
+    return this.tiles[r * this.cols + c] as Tile;
   }
 
   set(col: number, row: number, tile: Tile): void {
@@ -35,7 +40,6 @@ export class Room {
     this.tiles[row * this.cols + col] = tile;
   }
 
-  /** Everything outside the room counts as solid. */
   isSolid(col: number, row: number): boolean {
     return this.get(col, row) !== Tile.Floor;
   }

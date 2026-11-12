@@ -25,6 +25,8 @@ export class VirtualPad {
   private readonly sources = new Map<string, ButtonState>();
   private now = emptyState();
   private before = emptyState();
+  /** Buttons pressed since the last poll, even if already released. */
+  private readonly latched = new Map<string, Set<Button>>();
 
   /** A source reports a button going down or up. */
   set(source: string, button: Button, down: boolean): void {
@@ -34,15 +36,26 @@ export class VirtualPad {
       this.sources.set(source, state);
     }
     state[button] = down;
+    // A tap shorter than one logic step still counts as a press.
+    if (down) {
+      let taps = this.latched.get(source);
+      if (!taps) {
+        taps = new Set();
+        this.latched.set(source, taps);
+      }
+      taps.add(button);
+    }
   }
 
   /** Release everything a source holds (focus lost, pad unplugged). */
   clear(source: string): void {
     this.sources.delete(source);
+    this.latched.delete(source);
   }
 
   clearAll(): void {
     this.sources.clear();
+    this.latched.clear();
   }
 
   /** Latch the current state. Call once at the start of each logic step. */
@@ -54,6 +67,10 @@ export class VirtualPad {
         if (state[button]) next[button] = true;
       }
     }
+    for (const taps of this.latched.values()) {
+      for (const button of taps) next[button] = true;
+    }
+    this.latched.clear();
     this.now = next;
   }
 
