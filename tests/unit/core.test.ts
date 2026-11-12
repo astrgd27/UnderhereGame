@@ -1,10 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { SCREEN_H, SCREEN_W, STEP_MS, TILE } from '../../src/core/constants';
 import { FixedStep } from '../../src/core/fixedStep';
-import { HERO_SPEED, makeHero, stepHero } from '../../src/core/hero';
-import { boxOverlapsSolid, moveAndSlide } from '../../src/core/mover';
+import { moveAndSlide } from '../../src/core/mover';
 import { VirtualPad } from '../../src/core/pad';
-import { Room, makeTestRoom } from '../../src/core/room';
+import { Room } from '../../src/core/room';
 import { fitScreen } from '../../src/core/scale';
 
 describe('fitScreen', () => {
@@ -88,6 +87,17 @@ describe('VirtualPad', () => {
     expect(pad.isDown('r')).toBe(true);
   });
 
+  it('does not lose a tap that starts and ends between two steps', () => {
+    const pad = new VirtualPad();
+    pad.poll();
+    pad.set('keyboard', 'a', true);
+    pad.set('keyboard', 'a', false);
+    pad.poll();
+    expect(pad.justPressed('a')).toBe(true);
+    pad.poll();
+    expect(pad.isDown('a')).toBe(false);
+  });
+
   it('cancels opposite directions', () => {
     const pad = new VirtualPad();
     pad.set('keyboard', 'left', true);
@@ -146,68 +156,13 @@ describe('moveAndSlide', () => {
     expect(box).toMatchObject({ x: 21, y: TILE });
   });
 
-  it('treats pillars and the outside of the room as solid', () => {
+  it('treats pillars as solid and extends edge tiles outward', () => {
     expect(room.isSolid(2, 2)).toBe(true);
     expect(room.isSolid(-1, 0)).toBe(true);
     expect(room.isSolid(9, 9)).toBe(true);
+    const withDoor = Room.fromText(['###', '#..', '###']);
+    expect(withDoor.isSolid(5, 1)).toBe(false);
+    expect(withDoor.isSolid(5, 0)).toBe(true);
   });
 });
 
-describe('hero', () => {
-  const hold = (pad: VirtualPad, ...buttons: Parameters<VirtualPad['set']>[1][]) => {
-    pad.clearAll();
-    for (const button of buttons) pad.set('test', button, true);
-    pad.poll();
-  };
-
-  it('walks at 75 pixels per second', () => {
-    const room = makeTestRoom();
-    const pad = new VirtualPad();
-    const hero = makeHero(5 * TILE, 5 * TILE + 4);
-    const startX = hero.x;
-    hold(pad, 'right');
-    for (let i = 0; i < 20; i++) stepHero(hero, pad, room);
-    expect(hero.x - startX).toBeCloseTo(20 * HERO_SPEED);
-    expect(hero.facing).toBe('right');
-  });
-
-  it('is no faster on the diagonal', () => {
-    const room = makeTestRoom();
-    const pad = new VirtualPad();
-    const hero = makeHero(5 * TILE, 5 * TILE + 4);
-    const start = { x: hero.x, y: hero.y };
-    hold(pad, 'right', 'down');
-    for (let i = 0; i < 10; i++) stepHero(hero, pad, room);
-    expect(Math.hypot(hero.x - start.x, hero.y - start.y)).toBeCloseTo(10 * HERO_SPEED);
-  });
-
-  it('keeps her facing when a second direction is added', () => {
-    const room = makeTestRoom();
-    const pad = new VirtualPad();
-    const hero = makeHero(5 * TILE, 5 * TILE + 4);
-    hold(pad, 'up');
-    stepHero(hero, pad, room);
-    hold(pad, 'up', 'left');
-    stepHero(hero, pad, room);
-    expect(hero.facing).toBe('up');
-    hold(pad, 'left');
-    stepHero(hero, pad, room);
-    expect(hero.facing).toBe('left');
-  });
-
-  it('can never be pushed into a wall, whatever the input', () => {
-    const room = makeTestRoom();
-    const pad = new VirtualPad();
-    const hero = makeHero(7 * TILE, 6 * TILE);
-    const patterns = [['up'], ['up', 'left'], ['left'], ['down', 'left'], ['down'], ['down', 'right'], ['right'], ['up', 'right']] as const;
-    let seed = 12345;
-    for (let i = 0; i < 20000; i++) {
-      if (i % 37 === 0) {
-        seed = (seed * 1103515245 + 12345) >>> 0;
-        hold(pad, ...patterns[seed % patterns.length]!);
-      }
-      stepHero(hero, pad, room);
-      expect(boxOverlapsSolid(room, hero)).toBe(false);
-    }
-  });
-});

@@ -9,9 +9,32 @@ face the tyrant worm Akoa.
 
 ## Status
 
-Phase 0 (foundations) of the v2 design plan: one hand-made room, walkable with
-keyboard, gamepad or touch, on a 240x160 screen scaled by whole numbers.
-All art is placeholder, drawn in code.
+Phase 1 (feel prototype) of the v2 design plan: the full spear moveset, dodge,
+brace, three enemy roles and a hand-made five-room loop with slide
+transitions. All art is placeholder, drawn in code. No sound yet.
+
+```
+       [3 shooters]--[4 mixed arena]
+            |              |
+[0 start]--[1 rushers]--[2 guard]
+```
+
+The start room has two training dummies. Sparks show where on the spear a hit
+landed: gold for the tip (1.5x damage), white for the middle, grey for a weak
+point-blank hit (0.75x).
+
+## Moves
+
+| Move | Input | Notes |
+| --- | --- | --- |
+| Thrust | Tap A | Tap in rhythm for poke, poke, lunging third hit |
+| Charged lunge | Hold A after a thrust until the tip flashes, release | Dashes three tiles and pierces |
+| Sweep | A straight after a dodge | Wide, weak, strong knockback |
+| Dodge | R (with a direction, or the way she faces) | Two tiles; safe for the first half |
+| Brace | Hold L | Halves frontal contact damage; a charging rusher impales itself |
+
+Every combat number lives in `TUNE` in `src/core/hero.ts` and `ENEMY` in
+`src/core/enemies.ts`.
 
 ## Controls
 
@@ -44,7 +67,7 @@ npm run test:e2e   # browser smoke test against the build (needs Chrome)
 
 | Path | Contents |
 | --- | --- |
-| `src/core/` | Game rules with no engine dependency: screen fit, fixed 60 Hz step, virtual pad, rooms, collision, hero. Runs in Node for tests. |
+| `src/core/` | Game rules with no engine dependency: screen fit, fixed 60 Hz step, virtual pad, rooms, collision, hero, enemies, the game step. Runs in Node for tests. |
 | `src/input/` | Keyboard, gamepad and touch sources that feed the virtual pad |
 | `src/game/` | Phaser scenes and placeholder art |
 | `tests/unit/` | Vitest tests for `src/core/` |

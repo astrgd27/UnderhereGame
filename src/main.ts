@@ -2,12 +2,12 @@ import * as Phaser from 'phaser';
 import { SCREEN_H, SCREEN_W } from './core/constants';
 import { VirtualPad } from './core/pad';
 import { fitScreen } from './core/scale';
-import { RoomScene } from './game/RoomScene';
+import { PlayScene } from './game/PlayScene';
 import { attachKeyboard } from './input/keyboard';
 import { attachTouch, enableTouchUi } from './input/touch';
 
 const pad = new VirtualPad();
-const scene = new RoomScene(pad);
+const scene = new PlayScene(pad);
 const screen = document.getElementById('screen') as HTMLElement;
 
 const game = new Phaser.Game({

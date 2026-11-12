@@ -22,6 +22,8 @@
     #screen { grid-area: screen; display: grid; place-items: center; min-width: 0; min-height: 0; }
     #screen canvas { display: block; image-rendering: pixelated; }
     .cluster { display: none; touch-action: none; }
+    #hint { position: fixed; left: 0; right: 0; bottom: 6px; text-align: center; opacity: 0.55; pointer-events: none; }
+    body.touch #hint { display: none; }
 
     /* Touch layout: controls sit beside the screen, never on top of it. */
     body.touch #app { grid-template: "left screen right" 1fr / var(--gutter) 1fr var(--gutter); --gutter: clamp(132px, 19vw, 190px); }
@@ -77,6 +79,7 @@
       <div class="btn small" data-btn="start">START</div>
     </div>
   </div>
+  <div id="hint">Arrows move &middot; Z spear (hold to charge) &middot; C dodge &middot; Shift brace</div>
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
