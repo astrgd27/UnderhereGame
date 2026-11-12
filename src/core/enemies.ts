@@ -15,9 +15,9 @@ export const ENEMY = {
     chargeSpeed: 2.6, chargeSteps: 36, recover: 26, wallRecover: 44,
   },
   guard: {
-    hp: 12, contact: 2, bash: 4, size: 12,
-    walk: 0.35, turnEvery: 24, reach: 26, windup: 22,
-    bashSpeed: 1.6, bashSteps: 10, recover: 34,
+    hp: 10, contact: 2, bash: 3, size: 12,
+    walk: 0.3, turnEvery: 40, reach: 26, windup: 26,
+    bashSpeed: 1.6, bashSteps: 10, recover: 46,
   },
   shooter: {
     hp: 8, contact: 1, shot: 2, size: 12,
@@ -201,8 +201,8 @@ export function stepEnemy(e: Enemy, world: EnemyWorld): void {
         e.t -= 1;
         if (e.t <= 0) {
           e.state = 'idle';
-          e.cooldown = 20;
-          e.turn = 10;
+          e.cooldown = 24;
+          e.turn = 18;
         }
       }
       break;
