@@ -3,14 +3,14 @@ import { ARTIFACTS, type ArtifactId, type DungeonSpec, type RunPlan } from './ty
 
 /** Size and requirements by position in the run, from the design plan. */
 const BY_POSITION: ReadonlyArray<{ rooms: [number, number]; priors: number; pairings: [number, number] }> = [
-  { rooms: [8, 10], priors: 0, pairings: [0, 0] },
-  { rooms: [11, 14], priors: 1, pairings: [0, 0] },
-  { rooms: [11, 14], priors: 1, pairings: [0, 0] },
-  { rooms: [14, 18], priors: 2, pairings: [1, 1] },
-  { rooms: [14, 18], priors: 2, pairings: [1, 1] },
-  { rooms: [17, 21], priors: 3, pairings: [1, 2] },
-  { rooms: [17, 21], priors: 3, pairings: [1, 2] },
-  { rooms: [20, 24], priors: 4, pairings: [2, 2] },
+  { rooms: [10, 12], priors: 0, pairings: [0, 0] },
+  { rooms: [13, 16], priors: 1, pairings: [0, 0] },
+  { rooms: [13, 16], priors: 1, pairings: [0, 0] },
+  { rooms: [16, 20], priors: 2, pairings: [1, 1] },
+  { rooms: [16, 20], priors: 2, pairings: [1, 1] },
+  { rooms: [19, 23], priors: 3, pairings: [1, 2] },
+  { rooms: [19, 23], priors: 3, pairings: [1, 2] },
+  { rooms: [22, 26], priors: 4, pairings: [2, 2] },
 ];
 
 /** Each artifact must be required again in this many later dungeons. */

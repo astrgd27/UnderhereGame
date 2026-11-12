@@ -44,8 +44,8 @@ A seed always gives the same run. Generation has five stages, in `src/gen/`:
 | 5. Solver | `solver.ts`, `metrics.ts` | Explores every reachable situation; rejects softlocks, unneeded artifacts and bad pacing |
 
 `generate.ts` runs stages 2 to 5 and re-rolls with a derived seed until a
-candidate passes. Over 10,000 test dungeons it takes 2.5 candidates on
-average and 36 at worst.
+candidate passes. Over 10,000 test dungeons it takes 3 candidates on
+average and 53 at worst.
 
 ## Moves
 
